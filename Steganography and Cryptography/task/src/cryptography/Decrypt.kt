@@ -57,7 +57,7 @@ private fun Int.getBit() = this % 2
  * @return If the end marker has been reached
  */
 private fun List<Int>.reachEndMsg(): Boolean {
-    // if the pointer is currently in the middle of a byte or if there are less bits recovered that the length of the
+    // if the pointer is currently in the middle of a byte or if there are fewer bits recovered that the length of the
     // end marker, the end can't have been reached.
     if (this.size % 8 != 0 || this.size < 24) return false
 
