@@ -9,15 +9,15 @@ fun main() {
         println("Task (hide, show, exit):")
         val input = readln().lowercase()
         action = when (input) {
-            "hide" -> makeAction(Action.HIDE, ::hideMsg)
-            "show" -> makeAction(Action.SHOW, ::showMsg)
-            "exit" -> makeAction(Action.EXIT) { println("Bye!") }
-            else -> makeAction(Action.UNKNOWN) { println("Wrong task: $input") }
+            "hide" -> doAction(Action.HIDE, ::hideMsg)
+            "show" -> doAction(Action.SHOW, ::showMsg)
+            "exit" -> doAction(Action.EXIT) { println("Bye!") }
+            else -> doAction(Action.UNKNOWN) { println("Wrong task: $input") }
         }
     } while (action != Action.EXIT)
 }
 
-private fun makeAction(action: Action, doAction: () -> Unit): Action {
-    doAction()
-    return action
+private fun doAction(actionType: Action, action: () -> Unit): Action {
+    action()
+    return actionType
 }

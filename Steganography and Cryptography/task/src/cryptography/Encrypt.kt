@@ -5,8 +5,12 @@ import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
 
+/**
+ * Hide a message encrypted by a password inside the blue tint of an image
+ */
 fun hideMsg() {
     try {
+        // Ask for the image to modify, the output image, the message to hide and the password
         println("Input image file:")
         val inputFile = File(readln())
         println("Output image file:")
@@ -16,6 +20,7 @@ fun hideMsg() {
         println("Password:")
         val pwdInput = readln().toBinary()
 
+
         val msg = msgInput.encryptMsg(pwdInput)
         val img = ImageIO.read(inputFile)
 
@@ -24,8 +29,8 @@ fun hideMsg() {
             return
         }
 
+        // Modify the blue tint of as many pixels that there is bits in the encrypted message
         val bits = msg.listIterator()
-
         pixels@ for (y in 0 until img.height) {
             for (x in 0 until img.width) {
                 if (!bits.hasNext()) break@pixels
@@ -37,6 +42,7 @@ fun hideMsg() {
             }
         }
 
+        // Create the output image
         ImageIO.write(img, "png", outputFile)
         println("Message saved in ${outputFile.name} image.")
 
@@ -47,8 +53,23 @@ fun hideMsg() {
     }
 }
 
+/**
+ * Transform a string into a list of bits
+ * @receiver Text to be converted
+ * @return binary value of the text
+ */
 fun String.toBinary(): List<Int> = this.encodeToByteArray().flatMap { it.toBinaryList() }
 
+
+/**
+ * Modify the least bit of the int value of a color according to a given bit
+ * @param color Color to be modified
+ * @param bit Value of the least bit in the modified color
+ * -
+ *      0: the int value is even
+ *      1: the int value is odd
+ *  @return Modified color
+ */
 private fun colorEncrypt(color: Int, bit: Int) = when (bit) {
     color % 2 -> color
     0 -> color - 1
@@ -56,6 +77,11 @@ private fun colorEncrypt(color: Int, bit: Int) = when (bit) {
     else -> color
 }
 
+/**
+ * Turn a byte into it binary value (using the division method)
+ * @receiver Byte to be converted
+ * @return List of bits
+ */
 private fun Byte.toBinaryList(): List<Int> {
     val list = List(8) { 0 }.toMutableList()
     var quotient = this.toInt()
@@ -69,6 +95,13 @@ private fun Byte.toBinaryList(): List<Int> {
     return list
 }
 
+/**
+ * Encrypt a message (in binary form) by comparing its value to a given password
+ * and add an end marker.
+ * @receiver message to be encrypted
+ * @param password encryption key (in binary form)
+ * @return Encrypted message
+ */
 private fun List<Int>.encryptMsg(password: List<Int>): List<Int> = this
     .mapIndexed { i, bin ->  bin xor password[i % password.size] }
     .toMutableList().apply {
